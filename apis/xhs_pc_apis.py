@@ -5,6 +5,10 @@ import urllib
 import requests
 from xhs_utils.xhs_util import splice_str, generate_request_params, generate_x_b3_traceid, get_common_headers
 from loguru import logger
+from fastapi import FastAPI, Query
+from fastapi.responses import JSONResponse
+
+app = FastAPI()
 
 """
     获小红书的api
@@ -162,6 +166,7 @@ class XHS_Apis():
             msg = str(e)
         return success, msg, res_json
 
+    @app.get("get_user_note_info")
     def get_user_note_info(self, user_id: str, cursor: str, cookies_str: str, xsec_token='', xsec_source='', proxies: dict = None):
         """
             获取用户指定位置的笔记
@@ -191,11 +196,11 @@ class XHS_Apis():
             msg = str(e)
         return success, msg, res_json
 
-
+    @app.get("get_user_all_note")
     def get_user_all_notes(self, user_url: str, cookies_str: str, proxies: dict = None):
         """
            获取用户所有笔记
-           :param user_id: 你想要获取的用户的id
+           :param user_id: 你想要获取的用户的id 
            :param cookies_str: 你的cookies
            返回用户的所有笔记
         """
