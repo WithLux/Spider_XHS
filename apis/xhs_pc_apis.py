@@ -2,6 +2,9 @@
 import json
 import re
 import urllib
+from datetime import datetime, timezone, timedelta
+from operator import truediv
+
 import requests
 from xhs_utils.xhs_util import splice_str, generate_request_params, generate_x_b3_traceid, get_common_headers
 from loguru import logger
@@ -223,6 +226,67 @@ class XHS_Apis():
                 else:
                     break
                 note_list.extend(notes)
+                if len(notes) == 0 or not res_json["data"]["has_more"]:
+                    break
+        except Exception as e:
+            success = False
+            msg = str(e)
+        return success, msg, note_list
+
+    def get_user_notes_by_date(self, user_url: str, cookies_str: str, date_size: int, proxies: dict = None):
+        """
+           根据时间获取用户所有笔记
+           :param user_url: 你想要获取的用户的id
+           :param date_size: 你想要获取的笔记的时间范围，单位为天
+           :param cookies_str: 你的cookies
+           返回用户的所有笔记
+        """
+        cursor = ''
+        note_list = []
+        flag = True
+
+        tz = timezone(timedelta(hours=8))
+        today_midnight = datetime.now(tz).replace(hour=0, minute=0, second=0, microsecond=0)
+        adjusted_time = today_midnight - timedelta(days=date_size-1)
+        # 转换成 Unix 时间戳（秒）
+        timestamp_s = adjusted_time.timestamp()
+        # 转换成 Unix 时间戳（毫秒）
+        timestamp_ms = int(timestamp_s * 1000)
+
+        try:
+            urlParse = urllib.parse.urlparse(user_url)
+            user_id = urlParse.path.split("/")[-1]
+            kvs = urlParse.query.split('&')
+            kvDist = {kv.split('=')[0]: kv.split('=')[1] for kv in kvs}
+            xsec_token = kvDist['xsec_token'] if 'xsec_token' in kvDist else ""
+            xsec_source = kvDist['xsec_source'] if 'xsec_source' in kvDist else "pc_search"
+            while flag:
+                success, msg, res_json = self.get_user_note_info(user_id, cursor, cookies_str, xsec_token, xsec_source, proxies)
+                if not success:
+                    raise Exception(msg)
+                notes = res_json["data"]["notes"]
+
+                for note in notes:
+                    url = f'https://www.xiaohongshu.com/explore/{note['note_id']}?xsec_token={note["xsec_token"]}'
+                    if note['interact_info']['sticky'] == True:
+                        t_success,t_msg,t_res_json = self.get_note_info(url, cookies_str, proxies)
+                        if not t_success:
+                            raise Exception(t_msg)
+                        if t_res_json['data']['items'][0]['time'] > timestamp_ms:
+                            note_list.append(note)
+                    else:
+                        t_success, t_msg, t_res_json = self.get_note_info(url, cookies_str, proxies)
+                        if not t_success:
+                            raise Exception(t_msg)
+                        if t_res_json['data']['items'][0]['time'] > timestamp_ms:
+                            note_list.append(note)
+                        else:
+                            flag = False
+                            break
+                if 'cursor' in res_json["data"]:
+                    cursor = str(res_json["data"]["cursor"])
+                else:
+                    break
                 if len(notes) == 0 or not res_json["data"]["has_more"]:
                     break
         except Exception as e:

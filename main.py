@@ -197,5 +197,24 @@ def get_user_all_notes(user_url: str, cookies: str = Query(...), proxies: str = 
     except Exception as e:
         return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
 
+@app.get("/get_user_notes_by_date")
+def get_user_note_by_date(user_url: str, date_size: int, cookies: str = Query(...), proxies: str = Query(None)):
+    """
+    获取用户指定日期的笔记
+    :param user_url: 用户主页链接
+    :param date_size: 日期大小，单位为天
+    :param cookies: 用户cookies
+    :param proxies: 代理设置
+    :return: 用户指定日期的笔记信息
+    """
+    try:
+        success, msg, notes = xhs.get_user_notes_by_date(user_url, date_size, cookies, proxies)
+        if success:
+            return JSONResponse(content={"success": True, "data": notes})
+        else:
+            return JSONResponse(content={"success": False, "message": msg}, status_code=400)
+    except Exception as e:
+        return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
+
 if __name__ == '__main__':
     uvicorn.run("main:app", host="0.0.0.0", port=10000, reload=True)
