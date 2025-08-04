@@ -274,12 +274,12 @@ class XHS_Apis():
                         if not t_success:
                             raise Exception(t_msg)
                         if note_info['time'] > timestamp_ms:
-                            note_list.append(note)
+                            note_list.append(note_info)
                     else:
                         if not t_success:
                             raise Exception(t_msg)
                         if note_info['time'] > timestamp_ms:
-                            note_list.append(note)
+                            note_list.append(note_info)
                         else:
                             flag = False
                             break
