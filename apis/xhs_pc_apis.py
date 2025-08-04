@@ -267,7 +267,7 @@ class XHS_Apis():
                 notes = res_json["data"]["notes"]
 
                 for note in notes:
-                    url = f'https://www.xiaohongshu.com/explore/{note['note_id']}?xsec_token={note["xsec_token"]}'
+                    url = f'https://www.xiaohongshu.com/explore/{note["note_id"]}?xsec_token={note["xsec_token"]}'
                     if note['interact_info']['sticky'] == True:
                         t_success,t_msg,t_res_json = self.get_note_info(url, cookies_str, proxies)
                         if not t_success:
