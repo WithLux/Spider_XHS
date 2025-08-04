@@ -7,7 +7,6 @@ from apis.xhs_pc_apis import XHS_Apis
 from xhs_utils.common_util import init
 from xhs_utils.data_util import handle_note_info, download_note, save_to_xlsx
 
-
 '''class Data_Spider():
     def __init__(self):
         self.xhs_apis = XHS_Apis()
@@ -162,6 +161,7 @@ import uvicorn
 app = FastAPI()
 xhs = XHS_Apis()
 
+
 @app.get("/get_note_info")
 def get_note_info(note_url: str, cookies: str = Query(...), proxies: str = Query(None)):
     """
@@ -180,6 +180,7 @@ def get_note_info(note_url: str, cookies: str = Query(...), proxies: str = Query
     except Exception as e:
         return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
 
+
 @app.get("/get_user_all_notes")
 def get_user_all_notes(user_url: str, cookies: str = Query(...), proxies: str = Query(None)):
     """获取用户所有笔记
@@ -197,6 +198,7 @@ def get_user_all_notes(user_url: str, cookies: str = Query(...), proxies: str = 
     except Exception as e:
         return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
 
+
 @app.get("/get_user_notes_by_date")
 def get_user_note_by_date(user_url: str, date_size: int, cookies: str = Query(...), proxies: str = Query(None)):
     """
@@ -208,13 +210,14 @@ def get_user_note_by_date(user_url: str, date_size: int, cookies: str = Query(..
     :return: 用户指定日期的笔记信息
     """
     try:
-        success, msg, notes = xhs.get_user_notes_by_date(user_url, date_size, cookies, proxies)
+        success, msg, notes = xhs.get_user_notes_by_date(user_url, cookies, date_size, proxies)
         if success:
             return JSONResponse(content={"success": True, "data": notes})
         else:
             return JSONResponse(content={"success": False, "message": msg}, status_code=400)
     except Exception as e:
         return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
+
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="0.0.0.0", port=10000, reload=True)
