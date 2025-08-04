@@ -268,17 +268,17 @@ class XHS_Apis():
 
                 for note in notes:
                     url = f'https://www.xiaohongshu.com/explore/{note["note_id"]}?xsec_token={note["xsec_token"]}'
+                    t_success, t_msg, t_res_json = self.get_note_info(url, cookies_str, proxies)
+                    note_info = t_res_json['data']['items'][0]['note_card']
                     if note['interact_info']['sticky'] == True:
-                        t_success,t_msg,t_res_json = self.get_note_info(url, cookies_str, proxies)
                         if not t_success:
                             raise Exception(t_msg)
-                        if t_res_json['data']['items'][0]['time'] > timestamp_ms:
+                        if note_info['time'] > timestamp_ms:
                             note_list.append(note)
                     else:
-                        t_success, t_msg, t_res_json = self.get_note_info(url, cookies_str, proxies)
                         if not t_success:
                             raise Exception(t_msg)
-                        if t_res_json['data']['items'][0]['time'] > timestamp_ms:
+                        if note_info['time'] > timestamp_ms:
                             note_list.append(note)
                         else:
                             flag = False
