@@ -427,17 +427,20 @@ class XHS_Apis():
             msg = str(e)
         return success, msg, note_list
 
-    def get_note_info(self, note_id: str, xsec_token: str, cookies_str: str, proxies: dict = None):
+    def get_note_info(self, url: str, cookies_str: str, proxies: dict = None):
         """
             获取笔记的详细
-            :param note_id: 笔记的id
-            :param xsec_token: 笔记的xsec_token
+            :param url: 你想要获取的笔记的url
             :param cookies_str: 你的cookies
             :param xsec_source: 你的xsec_source 默认为pc_search pc_user pc_feed
             返回笔记的详细
         """
         res_json = None
         try:
+            urlParse = urllib.parse.urlparse(url)
+            note_id = urlParse.path.split("/")[-1]
+            kvs = urlParse.query.split('&')
+            kvDist = {kv.split('=')[0]: kv.split('=')[1] for kv in kvs}
             api = f"/api/sns/web/v1/feed"
             data = {
                 "source_note_id": note_id,
@@ -449,8 +452,8 @@ class XHS_Apis():
                 "extra": {
                     "need_body_topic": "1"
                 },
-                "xsec_source": "pc_feed",
-                "xsec_token": xsec_token
+                "xsec_source": kvDist['xsec_source'] if 'xsec_source' in kvDist else "pc_search",
+                "xsec_token": kvDist['xsec_token']
             }
             headers, cookies, data = generate_request_params(cookies_str, api, data)
             response = requests.post(self.base_url + api, headers=headers, data=data, cookies=cookies, proxies=proxies)
