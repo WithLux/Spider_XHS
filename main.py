@@ -200,8 +200,7 @@ def get_user_all_notes(user_url: str, cookies: str = Query(...), proxies: str = 
 
 
 @app.get("/get_user_notes_by_date")
-def get_user_note_by_date(user_url: str, date_size: int, cookies: str = Query(...), ifsticky: bool = False,
-                          proxies: str = Query(None)):
+def get_user_note_by_date(user_url: str, date_size: int, cookies: str = Query(...), proxies: str = Query(None)):
     """
     获取用户指定日期的笔记
     :param user_url: 用户主页链接
@@ -211,7 +210,7 @@ def get_user_note_by_date(user_url: str, date_size: int, cookies: str = Query(..
     :return: 用户指定日期的笔记信息
     """
     try:
-        success, msg, notes = xhs.get_user_notes_by_date(user_url, cookies, date_size, ifsticky, proxies)
+        success, msg, notes = xhs.get_user_notes_by_date(user_url, cookies, date_size, proxies)
         if success:
             return JSONResponse(content={"success": True, "data": notes})
         else:
