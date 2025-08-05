@@ -241,7 +241,7 @@ def get_note_out_comment_with_num(note_id: str, xsec_token: str, cookies: str = 
         return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
 
 @app.get("/get_note_info")
-def get_note_info_endpoint(note_id:str, xsec_token: str, cookies: str = Query(...), proxies: str = Query(None)):
+def get_note_info(note_id:str, xsec_token: str, cookies: str = Query(...), proxies: str = Query(None)):
     """
     获取笔记信息
     :param note_id: 笔记ID
