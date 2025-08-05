@@ -219,5 +219,45 @@ def get_user_note_by_date(user_url: str, date_size: int, cookies: str = Query(..
         return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
 
 
+@app.get("/get_note_out_comment_with_num")
+def get_note_out_comment_with_num(note_id: str, xsec_token: str, cookies: str = Query(...), num: int = 50,
+                                  proxies: str = Query(None)):
+    """
+    获取笔记指定数量的一级评论
+    :param note_id: 笔记ID
+    :param xsec_token: 笔记的xsec_token
+    :param cookies: 用户cookies
+    :param num: 评论数量
+    :param proxies: 代理设置
+    :return: 笔记指定数量的一级评论
+    """
+    try:
+        success, msg, comments = xhs.get_note_out_comment_with_num(note_id, xsec_token, cookies, num, proxies)
+        if success:
+            return JSONResponse(content={"success": True, "data": comments})
+        else:
+            return JSONResponse(content={"success": False, "message": msg}, status_code=400)
+    except Exception as e:
+        return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
+
+@app.get("/get_note_info")
+def get_note_info_endpoint(note_id:str, xsec_token: str, cookies: str = Query(...), proxies: str = Query(None)):
+    """
+    获取笔记信息
+    :param note_id: 笔记ID
+    :param xsec_token: 笔记的xsec_token
+    :param cookies: 用户cookies
+    :param proxies: 代理设置
+    :return: 笔记信息
+    """
+    try:
+        success, msg, note_info = xhs.get_note_info(note_id, xsec_token, cookies, proxies)
+        if success:
+            return JSONResponse(content={"success": True, "data": note_info})
+        else:
+            return JSONResponse(content={"success": False, "message": msg}, status_code=400)
+    except Exception as e:
+        return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
+
 if __name__ == '__main__':
     uvicorn.run("main:app", host="0.0.0.0", port=10000, reload=True)
