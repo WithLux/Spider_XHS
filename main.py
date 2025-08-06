@@ -240,6 +240,33 @@ def get_note_out_comment_with_num(note_id: str, xsec_token: str, cookies: str = 
     except Exception as e:
         return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
 
+@app.get("/search_note_by_keyword")
+def search_note_by_keyword(query: str, require_num: int, cookies: str = Query(...), sort_type_choice: int = 0,
+                           note_type: int = 0, note_time: int = 0, note_range: int = 0, pos_distance: int = 0,
+                           geo: dict = None, proxies: str = Query(None)):
+    """
+    指定数量搜索笔记，设置排序方式和笔记类型和笔记数量
+            :param query 搜索的关键词
+            :param require_num 搜索的数量
+            :param cookies_str 你的cookies
+            :param sort_type_choice 排序方式 0 综合排序, 1 最新, 2 最多点赞, 3 最多评论, 4 最多收藏
+            :param note_type 笔记类型 0 不限, 1 视频笔记, 2 普通笔记
+            :param note_time 笔记时间 0 不限, 1 一天内, 2 一周内天, 3 半年内
+            :param note_range 笔记范围 0 不限, 1 已看过, 2 未看过, 3 已关注
+            :param pos_distance 位置距离 0 不限, 1 同城, 2 附近 指定这个必须要指定 geo
+            :param geo: 定位信息 经纬度
+            :return 返回搜索的结果
+    """
+    try:
+        success, msg, notes = xhs.search_some_note(query, require_num, cookies, sort_type_choice, note_type,
+                                                   note_time, note_range, pos_distance, geo, proxies)
+        if success:
+            return JSONResponse(content={"success": True, "data": notes})
+        else:
+            return JSONResponse(content={"success": False, "message": msg}, status_code=400)
+    except Exception as e:
+        return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
+
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="0.0.0.0", port=10000, reload=True)
