@@ -250,8 +250,7 @@ class XHS_Apis():
         flag = True
 
         tz = timezone(timedelta(hours=8))
-        today_midnight = datetime.now(tz).replace(hour=0, minute=0, second=0, microsecond=0)
-        adjusted_time = today_midnight - timedelta(days=date_size - 1)
+        adjusted_time = datetime.now(tz) - timedelta(days=date_size - 1)
         # 转换成 Unix 时间戳（秒）
         timestamp_s = adjusted_time.timestamp()
         # 转换成 Unix 时间戳（毫秒）
