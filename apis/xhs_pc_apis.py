@@ -272,9 +272,9 @@ class XHS_Apis():
                 notes = res_json["data"]["notes"]
 
                 for note in notes:
-                    url = f'https://www.xiaohongshu.com/explore/{note["note_id"]}?xsec_token={note["xsec_token"]}'
-                    t_success, t_msg, t_res_json = self.get_note_info(url, cookies_str, proxies)
+                    t_success, t_msg, t_res_json = self.get_note_info(note["note_id"],note["xsec_token"], cookies_str, proxies)
                     note_info = t_res_json['data']['items'][0]['note_card']
+                    note_info['xsec_token'] = note['xsec_token']
                     if note['interact_info']['sticky'] == True:
                         if not t_success:
                             raise Exception(t_msg)
@@ -287,6 +287,7 @@ class XHS_Apis():
                             note_list.append(note_info)
                         else:
                             flag = False
+                            success = True
                             break
                 if 'cursor' in res_json["data"]:
                     cursor = str(res_json["data"]["cursor"])
