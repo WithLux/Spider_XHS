@@ -240,10 +240,11 @@ def get_note_out_comment_with_num(note_id: str, xsec_token: str, cookies: str = 
     except Exception as e:
         return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
 
+
 @app.get("/search_note_by_keyword")
 def search_note_by_keyword(query: str, require_num: int, cookies: str = Query(...), sort_type_choice: int = 0,
                            note_type: int = 0, note_time: int = 0, note_range: int = 0, pos_distance: int = 0,
-                           geo: dict = None, proxies: str = Query(None)):
+                           proxies: str = Query(None)):
     """
     指定数量搜索笔记，设置排序方式和笔记类型和笔记数量
             :param query 搜索的关键词
@@ -259,7 +260,7 @@ def search_note_by_keyword(query: str, require_num: int, cookies: str = Query(..
     """
     try:
         success, msg, notes = xhs.search_some_note(query, require_num, cookies, sort_type_choice, note_type,
-                                                   note_time, note_range, pos_distance, geo, proxies)
+                                                   note_time, note_range, pos_distance, "", proxies)
         if success:
             return JSONResponse(content={"success": True, "data": notes})
         else:
