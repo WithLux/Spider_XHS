@@ -180,9 +180,10 @@ def get_note_info(note_id: str, xsec_token: str, cookies: str = Query(...), prox
     except Exception as e:
         return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
 
+
 @app.get("/get_user_note_info")
-def get_user_note_info(user_id: str, cursor: str,  xsec_token:str, xsec_source: str,cookies_str: str= Query(...),
-                           proxies: dict = None):
+def get_user_note_info(user_id: str, xsec_token: str, xsec_source: str, cursor: str = '', cookies_str: str = Query(...),
+                       proxies: dict = Query(None)):
     """
     获取用户笔记信息
     :param user_id:
@@ -194,13 +195,14 @@ def get_user_note_info(user_id: str, cursor: str,  xsec_token:str, xsec_source: 
     :return:
     """
     try:
-        success,msg, note_info = xhs.get_user_note_info(user_id, cursor, xsec_token, xsec_source, cookies_str, proxies)
+        success, msg, note_info = xhs.get_user_note_info(user_id, cursor, xsec_token, xsec_source, cookies_str, proxies)
         if success:
             return JSONResponse(content={"success": True, "data": note_info})
         else:
             return JSONResponse(content={"success": False, "message": msg}, status_code=400)
     except Exception as e:
         return JSONResponse(content={"success": False, "message": str(e)}, status_code=500)
+
 
 @app.get("/get_user_all_notes")
 def get_user_all_notes(user_url: str, cookies: str = Query(...), proxies: str = Query(None)):
