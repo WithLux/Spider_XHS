@@ -195,7 +195,7 @@ def get_user_note_info(user_id: str, xsec_token: str, xsec_source: str, cursor: 
     :return:
     """
     try:
-        success, msg, note_info = xhs.get_user_note_info(user_id, cursor, xsec_token, xsec_source, cookies_str, proxies)
+        success, msg, note_info = xhs.get_user_note_info(user_id, cursor,cookies_str, xsec_token, xsec_source, proxies)
         if success:
             return JSONResponse(content={"success": True, "data": note_info})
         else:
