@@ -183,7 +183,7 @@ def get_note_info(note_id: str, xsec_token: str, cookies: str = Query(...), prox
 
 @app.get("/get_user_note_info")
 def get_user_note_info(user_id: str, xsec_token: str, xsec_source: str, cursor: str = '', cookies_str: str = Query(...),
-                       proxies: dict = Query(None)):
+                       proxies: str = Query(None)):
     """
     获取用户笔记信息
     :param user_id:
